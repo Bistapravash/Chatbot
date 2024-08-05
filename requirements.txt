@@ -1,0 +1,4 @@
+pypandoc
+PyPDF2
+openai
+PyQt5==5.15.7
