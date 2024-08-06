@@ -219,11 +219,12 @@ class DocumentChatbot(QMainWindow):
         file_path, _ = QFileDialog.getSaveFileName(self, 'Save Output', '', 'Text files (*.txt)')
         if file_path:
             try:
-                with open(file_path, 'w') as file:
+                with open(file_path, 'w', encoding='utf-8') as file:
                     file.write(self.chat_box.toPlainText())
                 QMessageBox.information(self, 'Info', 'Output saved successfully.')
             except Exception as e:
                 QMessageBox.critical(self, 'Error', f"Error saving file: {e}")
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
