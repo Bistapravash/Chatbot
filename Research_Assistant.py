@@ -43,9 +43,23 @@ def extract_text_from_txt(txt_path):
 
 # Function to preprocess the text
 def preprocess_text(text):
+    # Convert text to lowercase
     text = text.lower()
+    
+    # Define patterns for the various character sets
+    greek_pattern = r'\u0370-\u03FF\u1F00-\u1FFF'  # Greek and Coptic, Greek Extended
+    german_pattern = r'\u00C4\u00E4\u00D6\u00F6\u00DC\u00FC\u00DF'  # ÄäÖöÜüß
+    spanish_pattern = r'\u00C1\u00E1\u00C9\u00E9\u00CD\u00ED\u00D1\u00F1\u00D3\u00F3\u00DA\u00FA\u00DC\u00FC'  # ÁáÉéÍíÑñÓóÚúÜü
+    math_symbols_pattern = r'\u2200-\u22FF'  # Mathematical operators
+    additional_symbols_pattern = r'\*\+\-\^\/\\=\<\>\|@\&%'  # Add more symbols if needed
+    
+    # Combine all patterns into one
+    pattern = f'[{greek_pattern}{german_pattern}{spanish_pattern}{math_symbols_pattern}{additional_symbols_pattern}\w\s]'
+    
+    # Remove characters not matching the pattern
     text = re.sub(r'\s+', ' ', text)  # Remove extra spaces
-    text = re.sub(r'[^\w\s]', '', text)  # Remove non-alphanumeric characters except spaces
+    text = re.sub(f'[^{pattern}]', '', text)
+    
     return text
 
 # Function to answer questions using OpenAI API
@@ -179,10 +193,6 @@ class DocumentChatbot(QMainWindow):
                 QMessageBox.critical(self, 'Error', 'Unsupported file format.')
                 return
 
-            if "Error" in text:
-                QMessageBox.critical(self, 'Error', text)
-                return
-
             self.preprocessed_text = preprocess_text(text)
             QMessageBox.information(self, 'Info', 'Document loaded and text extracted.')
 
@@ -219,7 +229,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = DocumentChatbot()
     ex.show()
-    exit_code = app.quit()
-    sys.exit(exit_code)
-    #exit_code = app.exec_()
+    #exit_code = app.quit()
     #sys.exit(exit_code)
+    exit_code = app.exec_()
+    sys.exit(exit_code)
